@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+.matrix {
+  margin: 0 auto;
+}
+
+.rows {
+  display: flex;
+}
+
+.cell {
+  width: 50px; 
+  height: 50px;
+  background-color: red;
+  border: 1px solid black;
+}
+
+.cell-alive{
+  background-color: black;;
+}

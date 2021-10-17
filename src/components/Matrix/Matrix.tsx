@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 
 
 interface State {
-  matrix: boolean[][];
+  matrix: boolean[][],
+  gameState: boolean,
 }
 
 class Matrix extends Component<{}, State> {
@@ -11,6 +12,7 @@ class Matrix extends Component<{}, State> {
     super(props);
     this.state = {
       matrix: this.fillArray(),
+      gameState: false,
     }
 }
 
@@ -22,6 +24,19 @@ fillArray = () => {
   return newMatrix;
 }
 
+handleStartGame = (ev: React.MouseEvent<HTMLButtonElement>) => {
+  const currentState = this.state.gameState;
+  this.setState({
+    gameState: !currentState,
+  })
+}
+
+handleClear  = (ev: React.MouseEvent<HTMLButtonElement>) => {
+  this.setState({
+    matrix: this.fillArray(),
+  })
+}
+
 handleChange = (ev: React.MouseEvent<HTMLButtonElement>, indexColumn: number, indexRow: number) => {
   const matrixClone = this.state.matrix;
   matrixClone[indexRow][indexColumn] = !matrixClone[indexRow][indexColumn];
@@ -29,6 +44,7 @@ handleChange = (ev: React.MouseEvent<HTMLButtonElement>, indexColumn: number, in
   this.setState({
     matrix: matrixClone.slice()
   })
+
 }
 
 getNeighbours(indexRow: number, indexColumn: number) {
@@ -89,7 +105,15 @@ getNeighbours(indexRow: number, indexColumn: number) {
     left= m[indexRow][indexColumn-1];
     lefBottom = m[indexRow+1][indexColumn-1];
     bottom = m[indexRow+1][indexColumn];
-  }
+  } else if(indexRow == lengthRow -1 && indexColumn == lengthRow -1) {
+    leftTop = m[indexRow-1][indexColumn-1];
+    left= m[indexRow][indexColumn-1];
+    top = m[indexRow-1][indexColumn];
+  } else if(indexRow == lengthRow -1 && indexColumn == 0) {
+    top = m[indexRow-1][indexColumn];
+    rightTop = m[indexRow-1][indexColumn+1];
+    right = m[indexRow][indexColumn+1];
+  } 
 
   neighbours.push(top)
   neighbours.push(rightTop)
@@ -103,42 +127,6 @@ getNeighbours(indexRow: number, indexColumn: number) {
   console.log(neighbours)
   console.log('row',lengthColumn)
   console.log('col',lengthRow)
-
-
-  // if(indexRow == 0) {
-  //   var left= m[indexRow][indexColumn-1];
-  //   var lefBottom = m[indexRow+1][indexColumn-1];
-  //   var bottom = m[indexRow+1][indexColumn];
-  //   var right = m[indexRow][indexColumn+1];
-  //   var rightBottom = m[indexRow+1][indexColumn+1];
-  // }
-
-  // if(indexRow == lengthColumn - 1) {
-  //   var leftTop = m[indexRow-1][indexColumn-1];
-  //   var left= m[indexRow][indexColumn-1];
-  //   var top = m[indexRow-1][indexColumn];
-  //   var rightTop = m[indexRow+1][indexColumn+1];
-  //   var right = m[indexRow][indexColumn+1];
-  // }
-
-  // if(indexColumn == 0) {
-  //   var top = m[indexRow-1][indexColumn];
-  //   var bottom = m[indexRow+1][indexColumn];
-  //   var rightTop = m[indexRow+1][indexColumn+1];
-  //   var right = m[indexRow][indexColumn+1];
-  //   var rightBottom = m[indexRow+1][indexColumn+1];
-  // }
-
-  // if(indexColumn == lengthRow - 1) {
-  //   var leftTop = m[indexRow-1][indexColumn-1];
-  //   var left= m[indexRow][indexColumn-1];
-  //   var lefBottom = m[indexRow+1][indexColumn-1];
-  //   var top = m[indexRow-1][indexColumn];
-  //   var bottom = m[indexRow+1][indexColumn];
-  // }
-
-
-
 }
 
 componentDidMount() {
@@ -150,13 +138,17 @@ componentDidMount() {
     return (
       <React.Fragment>
         <h1>Game of Life</h1>
+        <button onClick={(ev) => this.handleStartGame(ev)}>{!this.state.gameState ? 'Starting' : 'Stop'}</button>
+        <button onClick={(ev) => this.handleClear(ev)}>
+          Clear
+        </button>
         <div className="matrix"> 
           {this.state.matrix && this.state.matrix.map((itemRow, indexRow) => {
             return(
               <div className="rows">
                 {itemRow.map((itemColumn, indexColumn)=> {
                   return(
-                  <button className="cell" onClick={(ev) => this.handleChange(ev, indexColumn, indexRow)}>
+                  <button className={!itemColumn ? 'cell' : 'cell cell-alive'} onClick={(ev) => this.handleChange(ev, indexColumn, indexRow)}>
                     <span>{!itemColumn ? '0' : '1'}</span>
                   </button>
                   );

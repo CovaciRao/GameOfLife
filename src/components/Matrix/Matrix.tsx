@@ -123,10 +123,19 @@ getNeighbours(indexRow: number, indexColumn: number) {
   neighbours.push(lefBottom)
   neighbours.push(left)
   neighbours.push(leftTop)
+  var nrNeighbours = 0;
+  neighbours.forEach(element => {
+    if(element){
+      nrNeighbours++;
+    }
+  });
+  return nrNeighbours;
+}
 
-  console.log(neighbours)
-  console.log('row',lengthColumn)
-  console.log('col',lengthRow)
+setLifeCyle(indexRow: number, indexColumn: number) {
+  let neighbours = this.getNeighbours(indexRow,indexColumn);
+  const m = this.state.matrix;
+  // if(m[indexRow][indexColumn] && (neighbours == 2 || neighbours == 3))
 }
 
 componentDidMount() {

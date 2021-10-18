@@ -48,7 +48,7 @@ handleChange = (ev: React.MouseEvent<HTMLButtonElement>, indexColumn: number, in
   })
 
 }
-
+// verify neighbours nr
 getNeighbours(indexRow: number, indexColumn: number) {
   const m = this.state.matrix;
   const lengthColumn = 50;
@@ -133,7 +133,7 @@ getNeighbours(indexRow: number, indexColumn: number) {
   });
   return nrNeighbours;
 }
-
+// calc if cell its going to be alive
 calcLifeCyle() {
   const m = this.state.matrix;
   const n = this.state.matrix;
@@ -150,11 +150,12 @@ calcLifeCyle() {
   }
   return n;
 }
-
+//lifecycle loop
 setLC  = (ev: React.MouseEvent<HTMLButtonElement>) => {
-  const newMatrix = this.calcLifeCyle();
+  var newMatrix = this.calcLifeCyle();
   const empty = this.fillArray();
   while(this.state.countState != 0) {
+    newMatrix = this.calcLifeCyle();
     if(newMatrix != empty) {
       this.setState((prevState) => {
         return {
@@ -172,7 +173,6 @@ setLC  = (ev: React.MouseEvent<HTMLButtonElement>) => {
 }
 
 componentDidMount() {
-
   console.log(this.state.matrix)
 }
 

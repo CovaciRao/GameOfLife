@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 interface State {
   matrix: boolean[][],
   gameState: boolean,
+  countState: number,
 }
 
 class Matrix extends Component<{}, State> {
@@ -13,13 +14,14 @@ class Matrix extends Component<{}, State> {
     this.state = {
       matrix: this.fillArray(),
       gameState: false,
+      countState: 0,
     }
 }
 
 fillArray = () => {
-  var newMatrix = new Array(10);
-  for(let i=0;i<10;i++) {
-    newMatrix[i] = new Array(10).fill(false);
+  var newMatrix = new Array(50);
+  for(let i=0;i<50;i++) {
+    newMatrix[i] = new Array(50).fill(false);
   }
   return newMatrix;
 }
@@ -49,8 +51,8 @@ handleChange = (ev: React.MouseEvent<HTMLButtonElement>, indexColumn: number, in
 
 getNeighbours(indexRow: number, indexColumn: number) {
   const m = this.state.matrix;
-  const lengthColumn = 10;
-  const lengthRow = 10;
+  const lengthColumn = 50;
+  const lengthRow = 50;
   let neighbours = [];
 
   var leftTop  = false;
@@ -132,10 +134,41 @@ getNeighbours(indexRow: number, indexColumn: number) {
   return nrNeighbours;
 }
 
-setLifeCyle(indexRow: number, indexColumn: number) {
-  let neighbours = this.getNeighbours(indexRow,indexColumn);
+calcLifeCyle() {
   const m = this.state.matrix;
-  // if(m[indexRow][indexColumn] && (neighbours == 2 || neighbours == 3))
+  const n = this.state.matrix;
+  for(let i=0;i<49;i++) {
+    for(let j=0;j<49;j++) {
+      let neighbours = this.getNeighbours(i,j);
+      if(m[i][j] && (neighbours < 2 || neighbours > 3)) {
+        n[i][j] = !m[i][j];
+      }
+      if(m[i][j] === false && neighbours == 3) {
+        n[i][j] = true
+      }
+    }
+  }
+  return n;
+}
+
+setLC  = (ev: React.MouseEvent<HTMLButtonElement>) => {
+  const newMatrix = this.calcLifeCyle();
+  const empty = this.fillArray();
+  while(this.state.countState != 0) {
+    if(newMatrix != empty) {
+      this.setState((prevState) => {
+        return {
+        matrix: [...newMatrix],
+        countState: prevState.countState+1,
+        }
+      }); 
+    } else {
+      this.setState({
+        matrix: [...empty],
+        countState: 0,
+      })
+    }
+  }
 }
 
 componentDidMount() {
@@ -147,7 +180,7 @@ componentDidMount() {
     return (
       <React.Fragment>
         <h1>Game of Life</h1>
-        <button onClick={(ev) => this.handleStartGame(ev)}>{!this.state.gameState ? 'Starting' : 'Stop'}</button>
+        <button onClick={(ev) => {this.handleStartGame(ev);this.setLC(ev)}}>{!this.state.gameState ? 'Starting' : 'Stop'}</button>
         <button onClick={(ev) => this.handleClear(ev)}>
           Clear
         </button>

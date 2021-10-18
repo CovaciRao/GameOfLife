@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 import React, { Component } from 'react';
 
-
 interface State {
   matrix: boolean[][],
   gameState: boolean,
@@ -154,29 +153,21 @@ calcLifeCyle() {
 setLC  = (ev: React.MouseEvent<HTMLButtonElement>) => {
   var newMatrix = this.calcLifeCyle();
   const empty = this.fillArray();
-  while(this.state.countState != 0) {
-    newMatrix = this.calcLifeCyle();
     if(newMatrix != empty) {
-      this.setState((prevState) => {
-        return {
-        matrix: [...newMatrix],
-        countState: prevState.countState+1,
-        }
-      }); 
-    } else {
       this.setState({
-        matrix: [...empty],
-        countState: 0,
-      })
-    }
+        matrix: [...newMatrix],
+        countState: this.state.countState+1,
+      }); 
   }
 }
 
-componentDidMount() {
-  console.log(this.state.matrix)
+makeLCProgress(prevState: State) {
+  return {
+    countState: prevState.countState+1,
+  }
 }
 
-  render() {
+render() {
     return (
       <React.Fragment>
         <h1>Game of Life</h1>

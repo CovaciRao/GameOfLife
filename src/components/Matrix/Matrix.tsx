@@ -149,16 +149,30 @@ calcLifeCyle() {
   }
   return n;
 }
-//lifecycle loop
-setLC  = (ev: React.MouseEvent<HTMLButtonElement>) => {
+
+createMatrix = () => {
   var newMatrix = this.calcLifeCyle();
-  const empty = this.fillArray();
-    if(newMatrix != empty) {
-      this.setState({
-        matrix: [...newMatrix],
-        countState: this.state.countState+1,
+    const empty = this.fillArray();
+      if(newMatrix != empty) {
+        this.setState({
+          matrix: [...newMatrix],
+          countState: this.state.countState+1,
       }); 
-  }
+    }
+}
+
+setLC  = (ev: React.MouseEvent<HTMLButtonElement>) => {  
+  const matinterval = setInterval(() => {
+    var newMatrix = this.calcLifeCyle();
+      if(this.state.gameState === true) {
+        this.setState({
+          matrix: [...newMatrix],
+          countState: this.state.countState+1,
+      }); 
+    } else {
+      clearInterval(matinterval);
+    }
+  }, 500)
 }
 
 makeLCProgress(prevState: State) {
@@ -181,9 +195,7 @@ render() {
               <div className="rows">
                 {itemRow.map((itemColumn, indexColumn)=> {
                   return(
-                  <button className={!itemColumn ? 'cell' : 'cell cell-alive'} onClick={(ev) => this.handleChange(ev, indexColumn, indexRow)}>
-                    <span>{!itemColumn ? '0' : '1'}</span>
-                  </button>
+                  <button className={!itemColumn ? 'cell' : 'cell cell-alive'} onClick={(ev) => this.handleChange(ev, indexColumn, indexRow)}></button>
                   );
                 })}
               </div>
